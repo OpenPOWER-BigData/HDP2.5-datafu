@@ -1,0 +1,95 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  apply from: file('gradle/buildscript.gradle'), to: buildscript
+}
+
+allprojects {
+  repositories {
+    mavenCentral()
+  }
+
+  // by default append "-SNAPSHOT" to all versions, unless explicitly overriden
+  beforeEvaluate { project ->
+    if (!ext.release.toBoolean()) {
+      project.version += "-SNAPSHOT"
+    }
+  }
+}
+
+apply from: file("gradle/dependency-versions.gradle")
+apply from: file("gradle/release.gradle")
+apply from: file("gradle/rat.gradle")
+
+rat {
+  excludes = [
+    '**/.git/**',
+    '**/.gradle/**',
+    '**/.project',
+    '**/.factorypath',
+    '**/.settings/**',
+    '**/.classpath',
+    '**/*.iml',
+    '**/*.iws',
+    '**/*.ipr',
+    '**/.rubyversion',
+    'gradle/wrapper/**',
+    '.reviewboardrc',
+    'gradlew',
+    '**/changes.md',
+    '**/README.md',
+    '**/.ruby-version',
+    'CONTRIBUTORS',
+    'RELEASE.md',
+    '**/.DS_Store/**',
+    '**/.gitignore',
+    '**/build/**',
+    '**/target/**',
+    '**/bin/**',
+    '**/test-output/**',
+    '**/Gemfile.lock',
+    '**/*.tsv',
+    '**/*.csv',
+    '**/*.svg',
+    '**/package-list',
+    '**/jquery-2.0.3.min.js', // see LICENSE
+    'site/source/stylesheets/normalize.css', // see LICENSE
+    // build-plugin files in the Public Domain - see the LICENSE file
+    'build-plugin/**/EcjMultilineProcessor.java',
+    'build-plugin/**/JavacMultilineProcessor.java',
+    'build-plugin/**/Multiline.java',
+    'build-plugin/**/MultilineProcessor.java',
+    'build-plugin/**/javax.annotation.processing.Processor',
+    // test data
+    'datafu-hourglass/data/**',
+    'datafu-pig/input*',
+    'datafu-pig/docs',
+    'datafu-pig/queries',
+    'datafu-pig/query'
+  ]
+}
+
+allprojects {
+  apply plugin: 'eclipse'
+}
